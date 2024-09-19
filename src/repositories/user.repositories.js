@@ -1,5 +1,6 @@
-import db from '../config/database.js'
+import db from '../config/database.js';
 
+// Criar a tabela 'users' se não existir
 db.run(`
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -8,27 +9,30 @@ db.run(`
         password TEXT NOT NULL,
         avatar TEXT
     )
-`)
+`);
 
-function createUserRepository(newUser){
+function createUserRepository(newUser) {
     return new Promise((resolve, reject) => {
-        const {username, email, password, avatar} = new newUser
+        const { username, email, password, avatar } = newUser;
+
+        // Inserção no banco de dados
         db.run(
             `
-            INSERT INTO users(username, email, password, avatar)
-            VALUE (?, ?, ?, ?)
-
-            `
+            INSERT INTO users (username, email, password, avatar)
+            VALUES (?, ?, ?, ?)
+            `,
             [username, email, password, avatar],
-            (err) => {
-                if(err){
-                    reject(err)
-                } else {
-                    resolve({message: 'user created!'})
+            function(err) {  // Usar 'function' para acessar 'this'
+                if (err) {
+                    return reject(err);
                 }
+                // Retorna o ID gerado e os dados do usuário
+                resolve({ id: this.lastID, ...newUser });
             }
-        )
-    })
+        );
+    });
 }
 
-export default {createUserRepository}
+export default {
+    createUserRepository
+};
