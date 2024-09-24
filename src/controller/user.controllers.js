@@ -5,12 +5,72 @@ async function createUserController(req, res) {
     
     try {
         const user = await userServices.createdUserService(newUser)
-       return res.status(201).send({user})
+        return res.status(201).send({user})
     } catch (error) {
-        return res.status(400).send(error.message)
+        return res.status(400).send({ message: error.message })
+    }
+}
+
+async function findAllUsersController(req, res) {
+    try {
+        const users = await userServices.findAllUsersService();
+        return res.status(200).send({users})
+    } catch (error) {
+        return res.status(400).send({message: error.message})
+    }
+}
+
+async function findUserByIdController(req, res) {
+    const {id} = req.params;
+
+    try {
+        const user = await userServices.findUserByIdService(id);
+        return res.status(200).send({user});
+    } catch (error) {
+        return res.status(404).send({message: error.message})
+    }
+}
+
+async function updateUserController(req, res) {
+    const {id} = req.params;
+    const newUser = req.body;
+
+    try {
+        const user = await userServices.updateUserService(id, newUser);
+        return res.status(200).send({user})
+    } catch (error) {
+        return res.status(400).send({message: error.message})
+    }
+}
+
+async function updateUserControllerPatch(req, res) {
+    const {id} = req.params;
+    const newUser = req.body;
+
+    try {
+        const user = await userServices.updateUserServicePatch(id, newUser);
+        return res.status(200).send({user})
+    } catch (error) {
+        return res.status(400).send({message: error.message})
+    }
+}
+
+async function deleteUserController(req, res) {
+    const {id} = req.params;
+
+    try {
+        const message = await userServices.deleteUserService(id);
+        return res.status(200).send({message})
+    } catch (error) {
+        return res.status(400).send({message: error.message})
     }
 }
 
 export default {
-    createUserController
+    createUserController,
+    findAllUsersController, 
+    findUserByIdController, 
+    updateUserController,
+    updateUserControllerPatch,
+    deleteUserController
 }
