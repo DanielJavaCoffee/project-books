@@ -35,7 +35,7 @@ function createUserRepository(newUser) {
 function findUserByEmailRepository(email) {
     return new Promise((resolve, reject) => {
         db.get(`
-            SELECT id, username, email, avatar
+            SELECT id, username, email, avatar, password
             FROM users
             WHERE email = ?
         `, [email], (err, row) => {
@@ -127,7 +127,7 @@ function updateUserRepositoryPatch(id, user){
     })
 }
 
-async function deleteUserRepository(id) {
+function deleteUserRepository(id) {
     return new Promise((resolve, reject) => {
         db.run(
             `DELETE FROM users WHERE id = ?;`, // SQL query

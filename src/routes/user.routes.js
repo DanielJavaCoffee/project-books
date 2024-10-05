@@ -2,19 +2,24 @@ import { Router } from "express";
 import userControllers from "../controller/user.controllers.js";
 import { validate, validateUserId } from "../middlewares/validation.middlewares.js";
 import { userSchema } from "../schema/user.schema.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.post('/users', validate(userSchema), userControllers.createUserController);
+router.post('/', validate(userSchema), userControllers.createUserController);
 
-router.get('/users', userControllers.findAllUsersController);
+router.post('/login', userControllers.loginUserController);
 
-router.get('/users/:id', validateUserId, userControllers.findUserByIdController);
+router.use(authMiddleware)
 
-router.put('/users/:id', validate(userSchema), validateUserId, userControllers.updateUserController);
+router.get('/', userControllers.findAllUsersController);
 
-router.patch('/users/:id', validateUserId, userControllers.updateUserControllerPatch);
+router.get('/:id', validateUserId, userControllers.findUserByIdController);
 
-router.delete('/users/:id', validateUserId, userControllers.deleteUserController);
+router.put('/:id', validate(userSchema), validateUserId, userControllers.updateUserController);
+
+router.patch('/:id', validateUserId, userControllers.updateUserControllerPatch);
+
+router.delete('/:id', validateUserId, userControllers.deleteUserController);
 
 export default router;
